@@ -14,17 +14,15 @@
 **Request**
 - **Method:** POST
 - **API 엔드포인트:** POST /schedules
-- **Body:**  `title` ,`content`, `name`, `password` 필수 입력
+- **Body:**  `title` ,`content` 필수 입력
 - **고유 식별자**  작성 유저명(user 테이블에서 가져옴)
     ```json lines
     {
     	"title" : "2026년 신정",
     	"content" : "2026년 1월 1일이다.",
-    	"name" : "김대훈",
-    	"password" : "1234"
     }
     ```
-- createDate, updateDate는 서버 자동 생성
+- scheduleCreateAt, scheduleUpdateAt는 서버 자동 생성
 
 **Response**
 - **Status Code: `201 Created`** 생성 성공
@@ -35,11 +33,14 @@
     ```json lines
     {
         "scheduleId": 1,
+        "user": {
+              "userId": 1,
+              "userName": "김대훈"
+           },
 	    "title" : "2026년 신정",
 	    "content" : "2026년 1월 1일이다.",
-	    "name" : "김대훈",
-	    "createDate" : "2025-12-29 15:13:21",
-        "updateDate" : "2025-12-29 15:13:21"
+	    "scheduleCreateAt" : "2025-12-29 15:13:21",
+        "scheduleUpdateAt" : "2025-12-29 15:13:21"
     }
     ```
 
@@ -70,19 +71,25 @@
     [
       {
            "scheduleId": 1,
+           "user": {
+              "userId": 1,
+              "userName": "김대훈"
+           },
            "title" : "2026년 신정",
 	       "content" : "2026년 1월 1일이다.",
-	       "name" : "김대훈",
-	       "createDate" : "2025-12-29 15:13:21",
-           "updateDate" : "2025-12-29 15:13:21"
+	       "scheduleCreateAt" : "2025-12-29 15:13:21",
+           "scheduleUpdateAt" : "2025-12-29 15:13:21"
        },
        {
            "scheduleId": 2,
+           "user": {
+              "userId": 1,
+              "userName": "김대훈"
+           },
            "title" : "2026년 크리스마스",
 	       "content" : "2026년 12월 25일이다.",
-	       "name" : "김대훈",
-	       "createDate" : "2025-12-29 15:13:21",
-           "updateDate" : "2025-12-29 15:13:21"
+	       "scheduleCreateAt" : "2025-12-29 15:13:21",
+           "scheduleUpdateAt" : "2025-12-29 15:13:21"
        }
     ]
     ```
@@ -114,11 +121,14 @@
     ```json lines
       {
            "scheduleId": 1,
+           "user": {
+              "userId": 1,
+              "userName": "김대훈"
+           },
            "title" : "2026년 신정",
 	       "content" : "2026년 1월 1일이다.",
-	       "name" : "김대훈",
-	       "createDate" : "2025-12-29 15:13:21",
-           "updateDate" : "2025-12-29 15:13:21"
+	       "scheduleCreateAt" : "2025-12-29 15:13:21",
+           "scheduleUpdateAt" : "2025-12-29 15:13:21"
        }
     ```
 
@@ -151,12 +161,14 @@
 - **Method:** PUT
 - **API 엔드포인트:** PUT /schedules/{scheduleId}
 - **Path Parameters:** key: scheduleId, Type: Long, 필수
-- **Body:**  `title` , `name`입력 `password` 필수 입력
+- **Body:**  `title` , `content`입력 `email`,`password` 필수 입력
 
     ```json lines
     {
     	"title" : "2026년 신정 다음 날",
-    	"name" : "김대훈2",
+        "content" : "수정된 내용",
+        //작성한 유저가 맞는지 검증
+        "email" : "eogns1@naver.com",   //userId를 줄 수 없으니 유니크 값인 이메일로 대체
     	"password" : "1234"
     }
     ```
@@ -169,23 +181,15 @@
     ```json lines
       {
            "scheduleId": 1,
+           "user": {
+              "userId": 1,
+              "userName": "김대훈"
+           },
            "title" : "2026년 신정 다음 날",
 	       "content" : "2026년 1월 1일이다.",
-	       "name" : "김대훈2",
-	       "createDate" : "2025-12-29 15:13:21",
-           "updateDate" : "2025-12-30 00:00:00"
+	       "scheduleCreateAt" : "2025-12-29 15:13:21",
+           "scheduleUpdateAt" : "2025-12-30 00:00:00"
        }
-    ```
-
-- **Status Code: `401 Unauthorized`** 비밀 번호 오류
-    - **Body:**
-
-      **설명:**   비밀 번호가 틀렸을 경우
-
-    ```json
-    {
-      "message": "비밀번호가 맞지 않거나 해당 일정을 찾을 수 없습니다."
-    }
     ```
 
 - **Status Code: `404 Not Found`** 리소스 없음
@@ -220,6 +224,7 @@
 - **Body:** `password` 필수 입력
     ```json lines
     {
+        "email" : "eogns1@naver.com",   //userId를 줄 수 없으니 유니크 값인 이메일로 대체
     	"password" : "1234"
     }
     ```
@@ -279,22 +284,21 @@
     	"password" : "1234"
     }
     ```
-- createDate, updateDate는 서버 자동 생성
+- userCreateAt, userUpdateAt는 서버 자동 생성
 
 **Response**
 - **Status Code: `201 Created`** 생성 성공
     - **Body**
 
-      **설명:** 서버에서 `scheduleId`가 부여된 완전한 `schedule` 객체를 반환.(password 제외)
+      **설명:** 서버에서 `userId`가 부여된 완전한 `user` 객체를 반환.(password 제외)
 
     ```json lines
     {
-        "scheduleId": 1,
-	    "title" : "2026년 신정",
-	    "content" : "2026년 1월 1일이다.",
-	    "name" : "김대훈",
-	    "createDate" : "2025-12-29 15:13:21",
-        "updateDate" : "2025-12-29 15:13:21"
+        "userId": 1,
+  	    "userName" : "김대훈",
+        "email" : "eogns1@naver.com",
+	    "userCreateAt" : "2025-12-29 15:13:21",
+        "userUpdateAt" : "2025-12-29 15:13:21"
     }
     ```
 
@@ -305,33 +309,231 @@
 
     ```json
     {
-      "message": "일정 제목, 일정 내용, 작성자명, 비밀번호는 필수 입력입니다."
+      "message": "유저 이름, 이메일, 비밀번호는 필수 입력입니다."
+    }
+    ```
+
+## `전체 유저 조회`
+
+**Request**
+- **Method:** GET
+- **API 엔드포인트:** GET /users
+
+**Response**
+- **Status Code: `200 OK`** 조회 성공
+    - **Body**
+
+      **설명:** `user` 객체를 반환. 없으면 빈 배열`[]` 반환.(password 제외)
+
+    ```json lines
+    [
+      {
+           "userId": 1,
+           "userName": "김대훈",
+           "email": "eogns1@naver.com",
+	       "userCreateAt" : "2025-12-29 15:13:21",
+           "userUpdateAt" : "2025-12-29 15:13:21"
+       },
+       {
+           "userId": 2,
+           "userName": "김철수",
+           "email": "eogns2@naver.com",
+	       "userCreateAt" : "2025-12-29 15:13:21",
+           "userUpdateAt" : "2025-12-29 15:13:21"
+       }
+    ]
+    ```
+
+- **Status Code: `500 Internal Server Error`** 서버 내부 오류
+    - **Body:**
+
+      **설명:**   서버 오류
+
+    ```json
+    {
+      "message": "요청을 처리하는 중 서버에서 오류가 발생했습니다."
+    }
+    ```
+
+## `선택 일정 조회`
+
+**Request**
+- **Method:** GET
+- **API 엔드포인트:** GET /users/{userId}
+- **Path Parameters:** key: userId, Type: Long, 필수 
+
+**Response**
+- **Status Code: `200 OK`** 조회 성공
+    - **Body**
+
+      **설명:** 해당하는 userId의 `user` 객체를 반환.(password 제외)
+
+    ```json lines
+      {
+           "userId": 1,
+           "userName": "김대훈",
+           "email": "eogns1@naver.com",
+	       "userCreateAt" : "2025-12-29 15:13:21",
+           "userUpdateAt" : "2025-12-29 15:13:21"
+       }
+    ```
+
+- **Status Code: `404 Not Found`** 리소스 없음
+    - **Body:**
+
+      **설명:**   파라미터로 받은 userId가 존재하지 않을 경우
+
+    ```json
+    {
+      "message": "해당 유저를 찾을 수 없습니다."
+    }
+    ```
+
+- **Status Code: `500 Internal Server Error`** 서버 내부 오류
+    - **Body:**
+
+      **설명:**   서버 오류, 파라미터로 받은 userId가 존재하지 않을 경우
+
+    ```json
+    {
+      "message": "요청을 처리하는 중 서버에서 오류가 발생했습니다."
     }
     ```
 
 
+## `유저 수정`
+
+**Request**
+- **Method:** PUT
+- **API 엔드포인트:** PUT /users/{userId}
+- **Path Parameters:** key: userId, Type: Long, 필수
+- **Body:**  `title` , `content`입력 `email`,`password` 필수 입력
+
+    ```json lines
+    {
+           "userName": "김대훈",
+           "email": "eogns1@naver.com",
+           "password": "1234"
+    }
+    ```
+
+
+**Response**
+- **Status Code: `200 OK`** 수정 성공
+    - **Body**
+      **설명:** 해당하는 `userId`의 수정된 객체 반환(수정일 현 시간으로 변경)
+    ```json lines
+      {
+           "userId": 1,
+           "userName": "김대훈",
+           "email": "eogns1@naver.com",
+	       "userCreateAt" : "2025-12-29 15:13:21",
+           "userUpdateAt" : "2026-12-29 15:13:21"
+       }
+    ```
+
+- **Status Code: `404 Not Found`** 리소스 없음
+    - **Body:**
+
+      **설명:**   파라미터로 받은 userId가 존재하지 않을 경우
+
+    ```json
+    {
+      "message": "해당 유저을 찾을 수 없습니다."
+    }
+    ```
+
+
+- **Status Code: `500 Internal Server Error`** 서버 내부 오류
+    - **Body:**
+
+      **설명:**   서버 오류, 파라미터로 받은 userId가 존재하지 않을 경우
+
+    ```json
+    {
+      "message": "요청을 처리하는 중 서버에서 오류가 발생했습니다."
+    }
+    ```
+
+## `유저 삭제`
+
+**Request**
+- **Method:** DELETE
+- **API 엔드포인트:** DELETE /users/{userId}
+- **Path Parameters:** key: userId, Type: Long, 필수
+- **Body:** `password` 필수 입력
+    ```json lines
+    {
+    	"password" : "1234"
+    }
+    ```
+**Response**
+- **Status Code: `204 No Contents`** 삭제 성공
+
+  **설명:** 해당하는 userId의 유저 삭제
+
+
+- **Status Code: `401 Unauthorized`** 비밀 번호 오류
+    - **Body:**
+
+      **설명:**   비밀번호가 틀렸을 경우
+
+    ```json
+    {
+      "message": "비밀번호가 맞지 않거나 해당 유저을 찾을 수 없습니다."
+    }
+    ```
+
+
+- **Status Code: `404 Not Found`** 리소스 없음
+    - **Body:**
+
+      **설명:**   파라미터로 받은 userId가 존재하지 않을 경우
+
+    ```json
+    {
+      "message": "해당 유저을 찾을 수 없습니다."
+    }
+    ```
+
+
+- **Status Code: `500 Internal Server Error`** 서버 내부 오류
+    - **Body:**
+
+      **설명:**   서버 오류, 파라미터로 받은 userId가 존재하지 않을 경우
+
+    ```json
+    {
+      "message": "요청을 처리하는 중 서버에서 오류가 발생했습니다."
+    }
+    ```
+
 
 ## ERD
-![img.png](image/ERD2.png)
+![img.png](image/ERD3.png)
+
+
 ## PostMan 실행 결과
+- 유저 생성
+
+- 유저 전체 조회
+
+- 유저 단 건 조회
+
+- 유저 수정
+
+- 유저 삭제
+
 - 일정 생성
-  ![img.png](image/img.png)
+
 - 일정 전체 조회
-  ![img.png](image/img_1.png)
+
 - 일정 단 건 조회
-  ![img.png](image/img_2.png)
 
 - 일정 수정
-  ![img.png](image/img_3.png)
 
 - 일정 삭제
-  ![img.png](image/img_4.png)
 
-- 댓글 생성
-  ![img.png](image/img_5.png)
-
-- 일정 조회 업그레이드
-  ![img.png](image/img_6.png)
 
 
   
