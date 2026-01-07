@@ -13,7 +13,7 @@
 
 **Request**
 - **Method:** POST
-- **API 엔드포인트:** POST /schedules
+- **API 엔드포인트:** POST /user/{userId}/schedules
 - **Body:**  `title` ,`content` 필수 입력
 - **고유 식별자**  작성 유저명(user 테이블에서 가져옴)
     ```json lines
