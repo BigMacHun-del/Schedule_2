@@ -15,7 +15,7 @@
 - **Method:** POST
 - **API 엔드포인트:** POST /schedules
 - **Body:**  `title` ,`content`, `name`, `password` 필수 입력
-
+- **고유 식별자**  작성 유저명(user 테이블에서 가져옴)
     ```json lines
     {
     	"title" : "2026년 신정",
@@ -264,37 +264,37 @@
     }
     ```
 
-## `댓글 생성`
+## `유저 생성`
 
 **Request**
 - **Method:** POST
-- **API 엔드포인트:** POST /schedules/comments/{scheduleId}
-- **Path Parameters:** key: scheduleId, Type: Long, 필수
-- **Body:**  `commentWriterName` ,`commentPassword`, `commentContent` 필수 입력
+- **API 엔드포인트:** POST /users
+- **Body:**  `userName`, `email`, `password` 필수 입력
+- **고유 식별자** 
 
     ```json lines
     {
-    	"commentWriterName" : "김대훈",
-    	"commentPassword" : "1234",
-    	"commentContent" : "2026년 새해 복 많이 받으세요~",
+    	"userName" : "김대훈",
+    	"email" : "eogns1@naver.com",
+    	"password" : "1234"
     }
     ```
-- commentCreateDate, commentUpdateDate는 서버 자동 생성
+- createDate, updateDate는 서버 자동 생성
 
 **Response**
 - **Status Code: `201 Created`** 생성 성공
     - **Body**
 
-      **설명:** 서버에서 `commentId`가 부여된 완전한 `comment` 객체를 반환.(password 제외)
+      **설명:** 서버에서 `scheduleId`가 부여된 완전한 `schedule` 객체를 반환.(password 제외)
 
     ```json lines
     {
-        "commentId": 1,
-	    "scheduleId" : 1,
-	    "commentContent" : "2026년 새해 복 많이 받으세요~",
-	    "commentWriterName" : "김대훈",
-	    "commentCreateDate" : "2025-12-29 15:13:21",
-        "commentUpdateDate" : "2025-12-29 15:13:21"
+        "scheduleId": 1,
+	    "title" : "2026년 신정",
+	    "content" : "2026년 1월 1일이다.",
+	    "name" : "김대훈",
+	    "createDate" : "2025-12-29 15:13:21",
+        "updateDate" : "2025-12-29 15:13:21"
     }
     ```
 
@@ -312,9 +312,7 @@
 
 
 ## ERD
-![img.png](image/ERD.png)
-
-
+![img.png](image/ERD2.png)
 ## PostMan 실행 결과
 - 일정 생성
   ![img.png](image/img.png)
