@@ -1,5 +1,7 @@
 package sparta.schedule2.User.controller;
 
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,11 +16,20 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping("/users")
-    public ResponseEntity<CreateUserResponse> createUser(
-            @RequestBody CreateUserRequest request
+    //회원 가입
+    @PostMapping("/signup")
+    public ResponseEntity<SignupResponse> signup(
+            @RequestBody SignupRequest request
             ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(request));
+    }
+
+    //로그인
+    @PostMapping("/login")
+    public ResponseEntity<Void> login(@Valid @RequestBody LoginRequest request, HttpSession session) {
+        SessionUser sessionUser = userService.login(request);
+        session.setAttribute("loginUser", sessionUser);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping("/users")
@@ -33,12 +44,12 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getOneUser(userId));
     }
 
-    @PutMapping("/users/{userId}")
+    @PutMapping("/users")
     public ResponseEntity<UpdateUserResponse> updateUser(
             @RequestBody UpdateUserRequest request,
-            @PathVariable Long userId
+            @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser
     ){
-        return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(userId, request));
+        return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(sessionUser.getUserId(), request));
     }
 
     @DeleteMapping("/users/{userId}")
