@@ -1,5 +1,6 @@
 package sparta.schedule2.User.service;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,10 +17,10 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public CreateUserResponse save(CreateUserRequest request) {
+    public SignupResponse save(SignupRequest request) {
         User user = new User(request.getUserName(), request.getEmail(), request.getPassword());
         User saveUser = userRepository.save(user);
-        return new CreateUserResponse(
+        return new SignupResponse(
                 saveUser.getUserId(),
                 saveUser.getUserName(),
                 saveUser.getEmail(),
@@ -80,5 +81,18 @@ public class UserService {
         }
 
         userRepository.deleteById(userId);
+    }
+
+    @Transactional(readOnly = true)
+    public SessionUser login(@Valid LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
+                () -> new IllegalArgumentException("없는 유저입니다.")
+        );
+
+        return new SessionUser(
+                user.getUserId(),
+                user.getEmail(),
+                user.getUserName()
+        );
     }
 }

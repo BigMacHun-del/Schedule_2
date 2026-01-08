@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sparta.schedule2.Schedule.dto.*;
 import sparta.schedule2.Schedule.service.ScheduleService;
+import sparta.schedule2.User.dto.SessionUser;
 
 import java.util.List;
 
@@ -14,19 +15,25 @@ import java.util.List;
 public class ScheduleController {
     private final ScheduleService scheduleService;
 
-    @PostMapping("/users/{userId}/schedules")
+    //일정 생성(로그인한 유저의 일정 생성)
+    @PostMapping("/schedules")
     public ResponseEntity<CreateScheduleResponse> createSchedule(
-            @PathVariable Long userId,
-            @RequestBody CreateScheduleRequest request
+            @RequestBody CreateScheduleRequest request,
+            @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser
     ){
-        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.saveSchedule(userId, request));
+        if(sessionUser == null){
+            throw new IllegalArgumentException("로그인 한 유저가 없습니다.");
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.saveSchedule(sessionUser.getUserId(), request));
     }
 
+    //일정 전체 조회
     @GetMapping("/schedules")
     public ResponseEntity<List<GetSchedulesResponse>> getAllSchedule(){
         return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getAllSchedule());
     }
 
+    //일정 단건 조회
     @GetMapping("/schedules/{scheduleID}")
     public ResponseEntity<GetScheduleResponse> getOneSchedule(
             @PathVariable Long scheduleID
@@ -34,19 +41,23 @@ public class ScheduleController {
         return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getOneSchedule(scheduleID));
     }
 
+    //일정 수정(해당 일정 작성자와 지금 로그인 한 세션이 같을 때 수정 권한 부여)
     @PutMapping("/schedules/{scheduleId}")
     public ResponseEntity<UpdateScheduleResposne> updateSchedule(
             @PathVariable Long scheduleId,
-            @RequestBody UpdateScheduleRequest request
+            @RequestBody UpdateScheduleRequest request,
+            @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser
     ){
-        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.updateSchedule(scheduleId, request));
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.updateSchedule(scheduleId, sessionUser.getUserId(), request));
     }
 
+    //일정 삭제(해당 일정 작성자와 지금 로그인 한 세션이 같을 때 삭제 권한 부여)
     @DeleteMapping("/schedules/{scheduleId}")
     public ResponseEntity<Void> deleteSchedule(
-            @PathVariable Long scheduleId
+            @PathVariable Long scheduleId,
+            @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser
     ){
-        scheduleService.deleteSchedule(scheduleId);
+        scheduleService.deleteSchedule(scheduleId, sessionUser.getUserId());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

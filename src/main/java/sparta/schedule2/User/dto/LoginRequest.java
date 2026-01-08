@@ -1,10 +1,13 @@
 package sparta.schedule2.User.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
 @Getter
-public class CreateUserRequest {
-    private String userName;
+public class LoginRequest {
+    @NotBlank
     private String email;
+
+    @NotBlank
     private String password;
 }

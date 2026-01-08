@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class CreateUserResponse {
+public class SignupResponse {
     private final Long userId;
     private final String userName;
     private final String email;
@@ -16,7 +16,7 @@ public class CreateUserResponse {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private final LocalDateTime userUpdateAt;
 
-    public CreateUserResponse(Long userId, String userName, String email, LocalDateTime userCreateAt, LocalDateTime userUpdateAt) {
+    public SignupResponse(Long userId, String userName, String email, LocalDateTime userCreateAt, LocalDateTime userUpdateAt) {
         this.userId = userId;
         this.userName = userName;
         this.email = email;
