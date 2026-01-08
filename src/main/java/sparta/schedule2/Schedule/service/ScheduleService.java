@@ -2,7 +2,6 @@ package sparta.schedule2.Schedule.service;
 
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
-import org.springframework.scheduling.annotation.Schedules;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sparta.schedule2.Schedule.dto.*;
@@ -11,9 +10,8 @@ import sparta.schedule2.Schedule.repository.ScheduleRepository;
 import sparta.schedule2.User.entity.User;
 import sparta.schedule2.User.repository.UserRepository;
 import sparta.schedule2.config.PasswordEncoder;
-import sparta.schedule2.exception.LoginFaliException;
 import sparta.schedule2.exception.NoAccessException;
-import sparta.schedule2.exception.ScheduleNotFountException;
+import sparta.schedule2.exception.ScheduleNotFoundException;
 import sparta.schedule2.exception.UserNotFoundException;
 
 import java.util.List;
@@ -47,7 +45,7 @@ public class ScheduleService {
     @Transactional(readOnly = true)
     public GetScheduleResponse getOneSchedule(Long scheduleId) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new ScheduleNotFountException("없는 일정입니다.")
+                () -> new ScheduleNotFoundException("없는 일정입니다.")
         );
         return new GetScheduleResponse(schedule);
     }
@@ -55,7 +53,7 @@ public class ScheduleService {
     @Transactional
     public @Nullable UpdateScheduleResposne updateSchedule(Long scheduleId, Long loginUserId, UpdateScheduleRequest request) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new ScheduleNotFountException("없는 일정입니다.")
+                () -> new ScheduleNotFoundException("없는 일정입니다.")
         );
 
         if (!schedule.getUser().getUserId().equals(loginUserId)){  //작성자 Id와 로그인 한 Id가 같지 않으면 수정 불가
@@ -85,7 +83,7 @@ public class ScheduleService {
 //            throw new ScheduleNotFountException("없는 일정입니다.");
 //        }
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new ScheduleNotFountException("없는 일정입니다.")
+                () -> new ScheduleNotFoundException("없는 일정입니다.")
         );
 
         if (!schedule.getUser().getUserId().equals(loginUserId)){
