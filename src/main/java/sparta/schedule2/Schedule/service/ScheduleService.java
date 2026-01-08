@@ -2,6 +2,7 @@ package sparta.schedule2.Schedule.service;
 
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
+import org.springframework.scheduling.annotation.Schedules;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sparta.schedule2.Schedule.dto.*;
@@ -46,21 +47,36 @@ public class ScheduleService {
     }
 
     @Transactional
-    public @Nullable UpdateScheduleResposne updateSchedule(Long scheduleId, UpdateScheduleRequest request) {
+    public @Nullable UpdateScheduleResposne updateSchedule(Long scheduleId, Long loginUserId, UpdateScheduleRequest request) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new IllegalArgumentException("없는 일정입니다.")
         );
+
+        if (!schedule.getUser().getUserId().equals(loginUserId)){  //작성자 Id와 로그인 한 Id가 같지 않으면 수정 불가
+            throw new IllegalArgumentException("작성자 본인만 수정할 수 있습니다.");
+        }
+
         schedule.update(request.getTitle(), request.getContent());
         return new UpdateScheduleResposne(schedule);
     }
 
     @Transactional
-    public void deleteSchedule(Long scheduleId) {
-        boolean existence = scheduleRepository.existsById(scheduleId);
-        if(!existence){
-            throw new IllegalArgumentException("없는 일정입니다.");
+    public void deleteSchedule(Long scheduleId, Long loginUserId) {
+//        boolean existence = scheduleRepository.existsById(scheduleId);
+//        if(!existence){
+//            throw new IllegalArgumentException("없는 일정입니다.");
+//        }
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
+                () -> new IllegalArgumentException("없는 일정입니다.")
+        );
+
+        if (!schedule.getUser().getUserId().equals(loginUserId)){
+            throw new IllegalArgumentException("작성자 본인만 삭제할 수 있습니다.");
         }
 
         scheduleRepository.deleteById(scheduleId);
+
+
+
     }
 }
