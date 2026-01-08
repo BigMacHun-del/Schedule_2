@@ -1,5 +1,6 @@
 package sparta.schedule2.Schedule.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import sparta.schedule2.Schedule.dto.*;
 import sparta.schedule2.Schedule.service.ScheduleService;
 import sparta.schedule2.User.dto.SessionUser;
+import sparta.schedule2.exception.SesstionNotFoundException;
 
 import java.util.List;
 
@@ -18,11 +20,11 @@ public class ScheduleController {
     //일정 생성(로그인한 유저의 일정 생성)
     @PostMapping("/schedules")
     public ResponseEntity<CreateScheduleResponse> createSchedule(
-            @RequestBody CreateScheduleRequest request,
+            @Valid @RequestBody CreateScheduleRequest request,
             @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser
     ){
         if(sessionUser == null){
-            throw new IllegalArgumentException("로그인 한 유저가 없습니다.");
+            throw new SesstionNotFoundException("로그인이 필요합니다.");
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.saveSchedule(sessionUser.getUserId(), request));
     }
@@ -45,7 +47,7 @@ public class ScheduleController {
     @PutMapping("/schedules/{scheduleId}")
     public ResponseEntity<UpdateScheduleResposne> updateSchedule(
             @PathVariable Long scheduleId,
-            @RequestBody UpdateScheduleRequest request,
+            @Valid @RequestBody UpdateScheduleRequest request,
             @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser
     ){
         return ResponseEntity.status(HttpStatus.OK).body(scheduleService.updateSchedule(scheduleId, sessionUser.getUserId(), request));

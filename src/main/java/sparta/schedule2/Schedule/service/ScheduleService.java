@@ -10,6 +10,9 @@ import sparta.schedule2.Schedule.entity.Schedule;
 import sparta.schedule2.Schedule.repository.ScheduleRepository;
 import sparta.schedule2.User.entity.User;
 import sparta.schedule2.User.repository.UserRepository;
+import sparta.schedule2.exception.NoAccessException;
+import sparta.schedule2.exception.ScheduleNotFountException;
+import sparta.schedule2.exception.UserNotFoundException;
 
 import java.util.List;
 
@@ -22,7 +25,7 @@ public class ScheduleService {
     @Transactional
     public CreateScheduleResponse saveSchedule(Long userId, CreateScheduleRequest request) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalArgumentException("없는 유저입니다.")
+                () -> new UserNotFoundException("없는 유저입니다.")
         );
 
         Schedule schedule = new Schedule(request.getTitle(), request.getContent(), user);
@@ -41,7 +44,7 @@ public class ScheduleService {
     @Transactional(readOnly = true)
     public GetScheduleResponse getOneSchedule(Long scheduleId) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new IllegalArgumentException("없는 일정입니다.")
+                () -> new ScheduleNotFountException("없는 일정입니다.")
         );
         return new GetScheduleResponse(schedule);
     }
@@ -49,11 +52,11 @@ public class ScheduleService {
     @Transactional
     public @Nullable UpdateScheduleResposne updateSchedule(Long scheduleId, Long loginUserId, UpdateScheduleRequest request) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new IllegalArgumentException("없는 일정입니다.")
+                () -> new ScheduleNotFountException("없는 일정입니다.")
         );
 
         if (!schedule.getUser().getUserId().equals(loginUserId)){  //작성자 Id와 로그인 한 Id가 같지 않으면 수정 불가
-            throw new IllegalArgumentException("작성자 본인만 수정할 수 있습니다.");
+            throw new NoAccessException("작성자 본인만 수정할 수 있습니다.");
         }
 
         schedule.update(request.getTitle(), request.getContent());
@@ -64,14 +67,14 @@ public class ScheduleService {
     public void deleteSchedule(Long scheduleId, Long loginUserId) {
 //        boolean existence = scheduleRepository.existsById(scheduleId);
 //        if(!existence){
-//            throw new IllegalArgumentException("없는 일정입니다.");
+//            throw new ScheduleNotFountException("없는 일정입니다.");
 //        }
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new IllegalArgumentException("없는 일정입니다.")
+                () -> new ScheduleNotFountException("없는 일정입니다.")
         );
 
         if (!schedule.getUser().getUserId().equals(loginUserId)){
-            throw new IllegalArgumentException("작성자 본인만 삭제할 수 있습니다.");
+            throw new NoAccessException("작성자 본인만 삭제할 수 있습니다.");
         }
 
         scheduleRepository.deleteById(scheduleId);

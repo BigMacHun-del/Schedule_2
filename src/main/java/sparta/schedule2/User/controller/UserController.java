@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sparta.schedule2.User.dto.*;
 import sparta.schedule2.User.service.UserService;
+import sparta.schedule2.exception.SesstionNotFoundException;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class UserController {
     //회원 가입
     @PostMapping("/signup")
     public ResponseEntity<SignupResponse> signup(
-            @RequestBody SignupRequest request
+            @Valid @RequestBody SignupRequest request
             ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(request));
     }
@@ -62,9 +63,13 @@ public class UserController {
     //SessionAttribute 적용하여, 로그인 상태 적용
     @PutMapping("/users")
     public ResponseEntity<UpdateUserResponse> updateUser(
-            @RequestBody UpdateUserRequest request,
+            @Valid @RequestBody UpdateUserRequest request,
             @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser
     ){
+        if (sessionUser == null) {
+            throw new SesstionNotFoundException("로그인이 필요합니다.");  //세션 유저가 없다면 권한 없음
+        }
+
         return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(sessionUser.getUserId(), request));
     }
 
@@ -74,7 +79,7 @@ public class UserController {
             @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser, HttpSession session
     ){
         if (sessionUser == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();  //세션 유저가 없다면 권한 없음
+            throw new SesstionNotFoundException("로그인이 필요합니다.");  //세션 유저가 없다면 권한 없음
         }
         userService.delete(sessionUser.getUserId());
         session.invalidate();  //세션 로그아웃

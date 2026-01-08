@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -27,14 +28,13 @@ public class User {
     @NotBlank(message = "유저 이름은 필수값입니다.")
     private String userName;
 
-    @Column(length = 100, nullable = false)
+    //validation은 dto에서 추가적으로 선언 -> 특히 Email이나 Size 같은 어노테이션
+    @Column(length = 100, nullable = false, unique = true)  //이메일은 단일값 지정
     @NotBlank(message = "이메일은 필수값입니다.")
-    @Email(message = "이메일 형식으로 작성하세요.")
     private String email;
 
     @Column(length = 100, nullable = false)
-    @NotBlank(message = "비밀 번호는 필수값입니다.")
-    @Size(min = 8, message = "비밀번호는 8자 이상이어야 합니다.")
+    @NotBlank(message = "비밀번호는 필수값입니다.")
     private String password;
 
     @CreatedDate
