@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import sparta.schedule2.User.dto.*;
 import sparta.schedule2.User.entity.User;
 import sparta.schedule2.User.repository.UserRepository;
+import sparta.schedule2.exception.UserNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public GetUserResponse getOneUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalArgumentException("없는 유저입니다.")
+                () -> new UserNotFoundException("없는 유저입니다.")
         );
         return new GetUserResponse(
                 user.getUserId(),
@@ -61,7 +62,7 @@ public class UserService {
     @Transactional
     public UpdateUserResponse updateUser(Long userId, UpdateUserRequest request) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalArgumentException("없는 유저입니다.")
+                () -> new UserNotFoundException("없는 유저입니다.")
         );
         user.update(request.getUserName(),request.getEmail());
         return new UpdateUserResponse(
@@ -77,7 +78,7 @@ public class UserService {
     public void delete(Long userId) {
         boolean existence = userRepository.existsById(userId);
         if (!existence){
-            throw new IllegalArgumentException("없는 유저입니다.");
+            throw new UserNotFoundException("없는 유저입니다.");
         }
 
         userRepository.deleteById(userId);
@@ -86,7 +87,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public SessionUser login(@Valid LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
-                () -> new IllegalArgumentException("없는 유저입니다.")
+                () -> new UserNotFoundException("없는 유저입니다.")
         );
 
         return new SessionUser(
