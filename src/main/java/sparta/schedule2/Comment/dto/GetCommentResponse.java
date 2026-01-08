@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class CreateCommentResponse {
+public class GetCommentResponse {
     private final Long commentId;
     private final Long scheduleId;
     private final Long userId;
@@ -17,12 +17,12 @@ public class CreateCommentResponse {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private final LocalDateTime commentUpdateAt;
 
-    public CreateCommentResponse(Long commentId, Long scheduleId, Long userId, String content, String userName, LocalDateTime commentCreateAt, LocalDateTime commentUpdateAt) {
+    public GetCommentResponse(Long commentId, Long scheduleId, Long userId, String userName, String content, LocalDateTime commentCreateAt, LocalDateTime commentUpdateAt) {
         this.commentId = commentId;
         this.scheduleId = scheduleId;
         this.userId = userId;
-        this.content = content;
         this.userName = userName;
+        this.content = content;
         this.commentCreateAt = commentCreateAt;
         this.commentUpdateAt = commentUpdateAt;
     }

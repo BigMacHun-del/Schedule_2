@@ -45,4 +45,8 @@ public class Comment {
         this.schedule = schedule;
         this.user = user;
     };
+
+    public void update(String content) {
+        this.content = content;
+    }
 }
