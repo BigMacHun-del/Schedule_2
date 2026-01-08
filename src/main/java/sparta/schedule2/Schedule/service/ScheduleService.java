@@ -10,6 +10,8 @@ import sparta.schedule2.Schedule.entity.Schedule;
 import sparta.schedule2.Schedule.repository.ScheduleRepository;
 import sparta.schedule2.User.entity.User;
 import sparta.schedule2.User.repository.UserRepository;
+import sparta.schedule2.config.PasswordEncoder;
+import sparta.schedule2.exception.LoginFaliException;
 import sparta.schedule2.exception.NoAccessException;
 import sparta.schedule2.exception.ScheduleNotFountException;
 import sparta.schedule2.exception.UserNotFoundException;
@@ -21,6 +23,7 @@ import java.util.List;
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public CreateScheduleResponse saveSchedule(Long userId, CreateScheduleRequest request) {
@@ -57,6 +60,18 @@ public class ScheduleService {
 
         if (!schedule.getUser().getUserId().equals(loginUserId)){  //작성자 Id와 로그인 한 Id가 같지 않으면 수정 불가
             throw new NoAccessException("작성자 본인만 수정할 수 있습니다.");
+        }
+
+        //위 코드에서 세션으로 검증 하고 있지만 이메일과 비밀번호를 한 번더 입력해 2차검증 수행함.
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
+                () -> new NoAccessException("이메일 또는 비밀번호가 틀렸습니다.")
+        );
+        boolean matchs = passwordEncoder.matches(
+                request.getPassword(),
+                user.getPassword()
+        );
+        if (!matchs) {
+            throw new NoAccessException("이메일 또는 비밀번호가 틀렸습니다.");
         }
 
         schedule.update(request.getTitle(), request.getContent());
