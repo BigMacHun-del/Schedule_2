@@ -514,25 +514,46 @@
 
 
 ## PostMan 실행 결과
-- 유저 생성
-
+- 회원 가입
+![img.png](image/img.png)
+- 로그인
+![img_1.png](image/img_1.png)
+- 로그아웃
+![img_2.png](image/img_2.png)
 - 유저 전체 조회
-
+![img_3.png](image/img_3.png)
 - 유저 단 건 조회
-
+![img_4.png](image/img_4.png)
 - 유저 수정
-
+![img_5.png](image/img_5.png)
 - 유저 삭제
-
+![img_6.png](image/img_6.png)
 - 일정 생성
-
+![img_7.png](image/img_7.png)
 - 일정 전체 조회
-
+![img_8.png](image/img_8.png)
+- 일정 전체 조회(페이징)
+![img_9.png](image/img_9.png)
+![img_10.png](image/img_10.png)
 - 일정 단 건 조회
-
+![img_11.png](image/img_11.png)
 - 일정 수정
-
+![img_12.png](image/img_12.png)
 - 일정 삭제
+![img_13.png](image/img_13.png)
+- 댓글 생성
+![img_14.png](image/img_14.png)
+- 특정 일정 댓글 전체 조회
+![img_15.png](image/img_15.png)
+- 특정 일정 댓글 단건 조회
+![img_16.png](image/img_16.png)
+- 특정 일정 댓글 수정
+![img_17.png](image/img_17.png)
+- 특정 일정 댓글 삭제
+![img_18.png](image/img_18.png)
+- 수정 시 password가 틀렸을 경우
+![img_19.png](image/img_19.png)
+
 
 
 
