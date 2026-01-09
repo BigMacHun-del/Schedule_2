@@ -2,6 +2,10 @@ package sparta.schedule2.Schedule.service;
 
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sparta.schedule2.Schedule.dto.*;
@@ -91,8 +95,20 @@ public class ScheduleService {
         }
 
         scheduleRepository.deleteById(scheduleId);
-
-
-
     }
+
+    @Transactional(readOnly = true)
+    public Page<PageScheduleResponse> getSchedules(int page, int size) {
+
+        int pageSize = (size <= 0) ? 10 : size; // size 설정 없으면 페이지 사이즈 디폴트 10
+
+        Pageable pageable = PageRequest.of(
+                page,
+                pageSize,
+                Sort.by(Sort.Direction.DESC, "scheduleUpdateAt")  //수정일 내림차순
+        );
+
+        return scheduleRepository.findAllWithPaging(pageable);
+    }
+
 }

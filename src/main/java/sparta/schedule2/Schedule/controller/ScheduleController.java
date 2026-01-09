@@ -2,6 +2,7 @@ package sparta.schedule2.Schedule.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -61,6 +62,17 @@ public class ScheduleController {
     ){
         scheduleService.deleteSchedule(scheduleId, sessionUser.getUserId());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    //일정 전체 조회(페이징)
+    @GetMapping("/schedules/pages")
+    //TODO: Response가 많이 나오는 이유: content필드에 PageScheduleResponse가 묶여서 나오고 나머지는 Page 객체의 메타데이터
+    public ResponseEntity<Page<PageScheduleResponse>> getSchedules(
+            @RequestParam(defaultValue = "1") int page,  //페이지 번호
+            @RequestParam(defaultValue = "10") int size  //페이지 크기
+    ) {
+        int pageIndex = page - 1;  //클라이언트에겐 페이지 1로 보이고 서버 내부는 service 코드에서 0이다.
+        return ResponseEntity.ok(scheduleService.getSchedules(pageIndex, size));
     }
 
 }
